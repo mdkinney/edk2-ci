@@ -13,116 +13,129 @@ strategy:
     windows_vs2015:
       imageName: 'vs2017-win2016'
       tool_chain_tag: 'VS2015x86'
-      package_archs: '-a IA32 -a X64'
+      tool_chain_archs: '-a IA32 -a X64'
     windows_vs2017:
-      imageName: 'vs2017-win2016
+      imageName: 'vs2017-win2016'
       tool_chain_tag: 'VS2017'
-      package_archs: '-a IA32 -a X64 -a ARM -a AARCH64'
+      tool_chain_archs: '-a IA32 -a X64 -a ARM -a AARCH64'
     ubuntu_gcc5:
       imageName: 'ubuntu-16.04'
       tool_chain_tag: 'GCC5'
-      package_archs: '-a IA32 -a X64 -a ARM -a AARCH64'
+      tool_chain_archs: '-a IA32 -a X64 -a ARM -a AARCH64'
     macos_xcode5:
       imageName: 'macOS-10.14'
       tool_chain_tag: 'XCODE5'
-      package_archs: '-a IA32 -a X64'
+      tool_chain_archs: '-a IA32 -a X64'
   maxParallel: 4
 
 pool:
   vmImage: $(imageName)
 
+variables:
+  workspace: '$(Build.SourcesDirectory)'
+
 steps:
-- script: |
-    set WORKSPACE=%CD%
-    powershell "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.7.4/python-3.7.4.exe -OutFile python-3.7.4.exe"}"
-    python-3.7.4.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
-    powershell "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri "https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/win64/nasm-2.14.02-win64.zip -OutFile nasm-2.14.02-win64.zip"}"
-    powershell Expand-Archive nasm-2.14.02-win64.zip .
-    set NASM_PREFIX=%WORKSPACE%\nasm-2.14.02\
-    powershell "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri "https://acpica.org/sites/acpica/files/iasl-win-20190703.zip -OutFile iasl-win-20190703.zip"}"
-    powershell Expand-Archive iasl-win-20190703.zip
-    set IASL_PREFIX=%WORKSPACE%\iasl-win-20190703\
-    powershell "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri "https://indy.fulgan.com/SSL/openssl-1.0.2s-x64_86-win64.zip -OutFile openssl-1.0.2s-x64_86-win64.zip"}"
-    powershell Expand-Archive openssl-1.0.2s-x64_86-win64.zip
-    path=%path%;%WORKSPACE%\openssl-1.0.2s-x64_86-win64
-    python --version
-    py --version
-    %NASM_PREFIX%nasm --v
-    %IASL_PREFIX%iasl -v
-    openssl version
-    cmd < GitCommands.txt
-    cd edk2
-    set EDK_TOOLS_PATH=%WORKSPACE%\edk2\BaseTools
-    set EDK_TOOLS_BIN=%WORKSPACE%\edk2\BaseTools\Bin\Win32
-    call edkSetup.bat Rebuild
-    set
-    call build $(package_archs) -n 0 -t $(tool_chain_tag) -p FatPkg/FatPkg.dsc
-    call build -a IA32 -a X64 -n 0 -t $(tool_chain_tag) -p OvmfPkg/OvmfPkgIa32X64.dsc -D SMM_REQUIRE -D DEBUG_ON_SERIAL_PORT
-    call build -a IA32 -t $(tool_chain_tag) -p EmulatorPkg/EmulatorPkg.dsc -D WIN_SEC_BUILD
-    call build -a X64  -t $(tool_chain_tag) -p EmulatorPkg/EmulatorPkg.dsc -D WIN_SEC_BUILD
-  condition: and (always(), eq(variables['Agent.OS'], 'Windows_NT'))
-
-- script: |
-    export WORKSPACE=$PWD
-    sudo apt update                                                             # APT
-    sudo apt install software-properties-common                                 # APT
-    sudo add-apt-repository ppa:deadsnakes/ppa                                  # APT
-    sudo apt update                                                             # APT
-    sudo apt install uuid-dev flex bison alien python3.7 gcc-aarch64-linux-gnu gcc-arm-none-eabi # Python 3.7 + GCC5
-    wget https://acpica.org/sites/acpica/files/acpica-unix2-20190703.tar_0.gz   # IASL
-    tar xzf acpica-unix2-20190703.tar_0.gz                                      # IASL
-    cd acpica-unix2-20190703                                                    # IASL
-    make iasl                                                                   # IASL
-    sudo make install                                                           # IASL
-    cd $WORKSPACE                                                               # IASL
-    wget https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/linux/nasm-2.14.02-0.fc27.x86_64.rpm  # NASM
-    sudo alien -i nasm-2.14.02-0.fc27.x86_64.rpm                                                  # NASM
-    python --version
-    python3.7 --version
-    gcc --version
-    aarch64-linux-gnu-gcc --version
-    arm-none-eabi-gcc --version
-    nasm --v
-    iasl -v
-    openssl version
-    export GCC5_AARCH64_PREFIX=aarch64-linux-gnu-
-    export GCC5_ARM_PREFIX=arm-none-eabi-
-    . GitCommands.txt
-    cd edk2
-    make -C BaseTools
-    . edksetup.sh
-    export
-    build $(package_archs) -n 0 -t $(tool_chain_tag) -p FatPkg/FatPkg.dsc
-    build -a IA32 -a X64 -n 0 -t $(tool_chain_tag) -p OvmfPkg/OvmfPkgIa32X64.dsc -D SMM_REQUIRE -D DEBUG_ON_SERIAL_PORT
-    build -a X64  -t $(tool_chain_tag) -p EmulatorPkg/EmulatorPkg.dsc -D UNIX_SEC_BUILD
-  condition: and (always(), eq(variables['Agent.OS'], 'Linux'))
-
-- script: |
-    export WORKSPACE=$PWD
-    sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
-    brew install caskroom/cask/brew-cask 2> /dev/null
-    brew cask install xquartz
-    brew install nasm
-    brew install acpica
-    curl https://sourceforge.net/p/cloverefiboot/code/4372/tree/BuildTools/usr/local/bin/mtoc.NEW.zip?format=raw -o mtoc.zip
-    unzip -qu mtoc.zip -d ./tmp
-    sudo cp ./tmp/mtoc.NEW /usr/local/bin/mtoc
-    sudo cp ./tmp/mtoc.NEW /usr/local/bin/mtoc.NEW
-    python --version
-    python3.7 --version
-    gcc --version
-    nasm --v
-    iasl -v
-    openssl version
-    mtoc
-    . GitCommands.txt
-    cd edk2
-    make -C BaseTools
-    . edksetup.sh
-    export
-    build $(package_archs) -n 0 -t $(tool_chain_tag) -p FatPkg/FatPkg.dsc
-    build -a IA32 -a X64 -n 0 -t $(tool_chain_tag) -p OvmfPkg/OvmfPkgIa32X64.dsc -D SMM_REQUIRE -D DEBUG_ON_SERIAL_PORT
-    build -a IA32 -t $(tool_chain_tag) -p EmulatorPkg/EmulatorPkg.dsc -D UNIX_SEC_BUILD
-#    build -a X64  -t $(tool_chain_tag) -p EmulatorPkg/EmulatorPkg.dsc -D UNIX_SEC_BUILD
-  condition: and (always(), eq(variables['Agent.OS'], 'Darwin'))
+  - script: |
+      powershell "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.7.4/python-3.7.4.exe -OutFile python-3.7.4.exe"}"
+      python-3.7.4.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
+      powershell "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri "https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/win64/nasm-2.14.02-win64.zip -OutFile nasm-2.14.02-win64.zip"}"
+      powershell Expand-Archive nasm-2.14.02-win64.zip .
+      powershell "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri "https://acpica.org/sites/acpica/files/iasl-win-20190703.zip -OutFile iasl-win-20190703.zip"}"
+      powershell Expand-Archive iasl-win-20190703.zip
+      powershell "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri "https://indy.fulgan.com/SSL/openssl-1.0.2s-x64_86-win64.zip -OutFile openssl-1.0.2s-x64_86-win64.zip"}"
+      powershell Expand-Archive openssl-1.0.2s-x64_86-win64.zip
+    condition: and (always(), eq(variables['Agent.OS'], 'Windows_NT'))
+    displayName: Windows Prerequisites
+  - script: |
+      sudo apt update                                                                               # APT
+      sudo apt install software-properties-common                                                   # APT
+      sudo add-apt-repository ppa:deadsnakes/ppa                                                    # APT
+      sudo apt update                                                                               # APT
+      sudo apt install uuid-dev flex bison gcab alien python3.7 gcc-aarch64-linux-gnu gcc-arm-none-eabi  # Python 3.7 + GCC5
+      wget https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/linux/nasm-2.14.02-0.fc27.x86_64.rpm  # NASM
+      sudo alien -i nasm-2.14.02-0.fc27.x86_64.rpm                                                  # NASM
+      wget https://acpica.org/sites/acpica/files/acpica-unix2-20190703.tar_0.gz                     # IASL
+      tar xzf acpica-unix2-20190703.tar_0.gz                                                        # IASL
+      cd acpica-unix2-20190703                                                                      # IASL
+      make iasl                                                                                     # IASL
+      sudo make install                                                                             # IASL
+    condition: and (always(), eq(variables['Agent.OS'], 'Linux'))
+    displayName: Ubuntu 16.04 Prerequisites
+  - script: |
+      sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
+      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
+      brew install caskroom/cask/brew-cask 2> /dev/null
+      brew cask install xquartz
+      brew install gcab
+      brew install nasm
+      brew install acpica
+      curl https://sourceforge.net/p/cloverefiboot/code/4372/tree/BuildTools/usr/local/bin/mtoc.NEW.zip?format=raw -o mtoc.zip
+      unzip -qu mtoc.zip -d ./tmp
+      sudo cp ./tmp/mtoc.NEW /usr/local/bin/mtoc
+      sudo cp ./tmp/mtoc.NEW /usr/local/bin/mtoc.NEW
+    condition: and (always(), eq(variables['Agent.OS'], 'Darwin'))
+    displayName: Mac OS 14.10 Prerequisites
+  - template: GitCommands.yml
+  - script: |
+      set WORKSPACE=$(workspace)
+      set PACKAGES_PATH=$(workspace)\edk2
+      set EDK_TOOLS_PATH=$(workspace)\edk2\BaseTools
+      set EDK_TOOLS_BIN=$(workspace)\edk2\BaseTools\Bin\Win32
+      set NASM_PREFIX=$(workspace)\nasm-2.14.02\
+      set IASL_PREFIX=$(workspace)\iasl-win-20190703\
+      path=%path%;$(workspace)\openssl-1.0.2s-x64_86-win64
+      cd edk2
+      call edkSetup.bat Rebuild
+      set
+      python --version
+      py --version
+      %NASM_PREFIX%nasm --v
+      %IASL_PREFIX%iasl -v
+      openssl version
+      call build $(tool_chain_archs) -n 0 -t $(tool_chain_tag) -p FatPkg/FatPkg.dsc
+      call build -a IA32 -a X64 -n 0 -t $(tool_chain_tag) -p OvmfPkg/OvmfPkgIa32X64.dsc -D SMM_REQUIRE -D DEBUG_ON_SERIAL_PORT
+      call build -a IA32 -t $(tool_chain_tag) -p EmulatorPkg/EmulatorPkg.dsc -D WIN_SEC_BUILD
+      call build -a X64  -t $(tool_chain_tag) -p EmulatorPkg/EmulatorPkg.dsc -D WIN_SEC_BUILD
+    condition: and (always(), eq(variables['Agent.OS'], 'Windows_NT'))
+    displayName: Windows EDK II Build
+  - script: |
+      export WORKSPACE=$(workspace)
+      export PACKAGES_PATH=$(workspace)/edk2
+      export GCC5_AARCH64_PREFIX=aarch64-linux-gnu-
+      export GCC5_ARM_PREFIX=arm-none-eabi-
+      cd edk2
+      make -C BaseTools
+      . edksetup.sh
+      export
+      python --version
+      python3.7 --version
+      gcc --version
+      aarch64-linux-gnu-gcc --version
+      arm-none-eabi-gcc --version
+      nasm --v
+      iasl -v
+      openssl version
+      build $(tool_chain_archs) -n 0 -t $(tool_chain_tag) -p FatPkg/FatPkg.dsc
+      build -a IA32 -a X64 -n 0 -t $(tool_chain_tag) -p OvmfPkg/OvmfPkgIa32X64.dsc -D SMM_REQUIRE -D DEBUG_ON_SERIAL_PORT
+      build -a X64  -t $(tool_chain_tag) -p EmulatorPkg/EmulatorPkg.dsc -D UNIX_SEC_BUILD
+    condition: and (always(), eq(variables['Agent.OS'], 'Linux'))
+    displayName: Ubuntu 16.04 EDK II Build
+  - script: |
+      export WORKSPACE=$(workspace)
+      export PACKAGES_PATH=$(workspace)/edk2
+      cd edk2
+      make -C BaseTools
+      . edksetup.sh
+      export
+      python --version
+      python3.7 --version
+      gcc --version
+      mtoc
+      nasm --v
+      iasl -v
+      openssl version
+      build $(tool_chain_archs) -n 0 -t $(tool_chain_tag) -p FatPkg/FatPkg.dsc
+      build -a IA32 -a X64 -n 0 -t $(tool_chain_tag) -p OvmfPkg/OvmfPkgIa32X64.dsc -D SMM_REQUIRE -D DEBUG_ON_SERIAL_PORT
+      build -a IA32 -t $(tool_chain_tag) -p EmulatorPkg/EmulatorPkg.dsc -D UNIX_SEC_BUILD
+    condition: and (always(), eq(variables['Agent.OS'], 'Darwin'))
+    displayName: Mac OS 14.10 EDK II Build
