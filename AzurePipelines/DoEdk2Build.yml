@@ -1,0 +1,146 @@
+## @file
+#  Azure Pipielines YML template file to do EDKK II Builds from parameters
+#  passed in from azure-pipelines.yml.
+#
+#  Copyright (c) 2019, Intel Corporation. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+parameters:
+  git_commands: |
+    git clone --depth 1 https://github.com/tianocore/edk2.git
+    cd edk2
+    git submodule update --init
+  x11_prerequisite: 'false'
+  edk2_path: 'edk2'
+  build_target_list:
+  - 'DEBUG'
+  packages_path_list:
+  - 'edk2'
+  tool_chain_tag_build_list:
+  - 'VS2015x86'
+  - 'VS2017'
+  - 'GCC5'
+  - 'XCODE5'
+  arch_build_list:
+  - 'IA32'
+  - 'X64'
+  - 'ARM'
+  - 'AARCH64'
+  packages_build_list:
+  linux_packages_build_list:
+  windows_packages_build_list:
+
+jobs:
+  - job: windows_vs2015
+    displayName: 'Windows 2016 VS2015'
+    condition: contains ('${{ join(' ', parameters.tool_chain_tag_build_list) }}', 'VS2015x86')
+    pool:
+      vmImage: 'vs2017-win2016'
+    variables:
+      workspace: $(Build.SourcesDirectory)
+      x11_prerequisite: ${{ parameters.x11_prerequisite }}
+      edk2_path: ${{ parameters.edk2_path }}
+      packages_path: $(workspace)\${{ join(';$(workspace)\', parameters.packages_path_list) }}
+      build_target_list: ${{ join(' ', parameters.build_target_list) }}
+      packages_build_list: ${{ join(':', parameters.packages_build_list) }}:${{ join(':', parameters.windows_packages_build_list) }}
+      tool_chain_tag_build_list: ${{ join(' ', parameters.tool_chain_tag_build_list) }}
+      arch_build_list: ${{ join(' ', parameters.arch_build_list) }}
+      nasm_prefix:
+      iasl_prefix:
+      gcc5_aarch64_prefix:
+      gcc5_arm_prefix:
+      tool_chain_tag: 'VS2015x86'
+      tool_chain_archs: 'IA32 X64'
+      edk_tools_path: $(workspace)\$(edk2_path)\BaseTools
+      edk_tools_bin: $(workspace)\$(edk2_path)\BaseTools\Bin\Win32
+    steps:
+      - script: |
+          ${{ parameters.git_commands }}
+        displayName: 'Clone EDK II Repositories'
+      - template: WindowsPrerequisites.yml
+      - template: WindowsEdk2Build.yml
+  - job: windows_vs2017
+    displayName: 'Windows 2016 VS2017'
+    condition: contains ('${{ join(' ', parameters.tool_chain_tag_build_list) }}', 'VS2017')
+    pool:
+      vmImage: 'vs2017-win2016'
+    variables:
+      workspace: $(Build.SourcesDirectory)
+      x11_prerequisite: ${{ parameters.x11_prerequisite }}
+      edk2_path: ${{ parameters.edk2_path }}
+      packages_path: $(workspace)\${{ join(';$(workspace)\', parameters.packages_path_list) }}
+      build_target_list: ${{ join(' ', parameters.build_target_list) }}
+      packages_build_list: ${{ join(':', parameters.packages_build_list) }}:${{ join(':', parameters.windows_packages_build_list) }}
+      tool_chain_tag_build_list: ${{ join(' ', parameters.tool_chain_tag_build_list) }}
+      arch_build_list: ${{ join(' ', parameters.arch_build_list) }}
+      nasm_prefix:
+      iasl_prefix:
+      gcc5_aarch64_prefix:
+      gcc5_arm_prefix:
+      tool_chain_tag: 'VS2017'
+      tool_chain_archs: 'IA32 X64 ARM AARCH64'
+      edk_tools_path: $(workspace)\$(edk2_path)\BaseTools
+      edk_tools_bin: $(workspace)\$(edk2_path)\BaseTools\Bin\Win32
+    steps:
+      - script: |
+          ${{ parameters.git_commands }}
+        displayName: 'Clone EDK II Repositories'
+      - template: WindowsPrerequisites.yml
+      - template: WindowsEdk2Build.yml
+  - job: ubuntu_gcc5
+    displayName: 'Ubuntu 16.04 GCC5'
+    condition: contains ('${{ join(' ', parameters.tool_chain_tag_build_list) }}', 'GCC')
+    pool:
+      vmImage: 'ubuntu-16.04'
+    variables:
+      workspace: $(Build.SourcesDirectory)
+      x11_prerequisite: ${{ parameters.x11_prerequisite }}
+      edk2_path: ${{ parameters.edk2_path }}
+      packages_path: $(workspace)/${{ join(':$(workspace)/', parameters.packages_path_list) }}
+      build_target_list: ${{ join(' ', parameters.build_target_list) }}
+      packages_build_list: ${{ join(':', parameters.packages_build_list) }}:${{ join(':', parameters.linux_packages_build_list) }}
+      tool_chain_tag_build_list: ${{ join(' ', parameters.tool_chain_tag_build_list) }}
+      arch_build_list: ${{ join(' ', parameters.arch_build_list) }}
+      nasm_prefix:
+      iasl_prefix:
+      gcc5_aarch64_prefix:
+      gcc5_arm_prefix:
+      tool_chain_tag: 'GCC5'
+      tool_chain_archs: 'IA32 X64 ARM AARCH64'
+      edk_tools_path: $(workspace)/$(edk2_path)/BaseTools
+    steps:
+      - script: |
+          ${{ parameters.git_commands }}
+        displayName: 'Clone EDK II Repositories'
+      - template: UbuntuPrerequisites.yml
+      - template: LinuxEdk2Build.yml
+  - job: macos_xcode5
+    displayName: 'MacOS 10.14 XCODE5'
+    condition: contains ('${{ join(' ', parameters.tool_chain_tag_build_list) }}', 'XCODE5')
+    pool:
+      vmImage: 'macOS-10.14'
+    variables:
+      workspace: $(Build.SourcesDirectory)
+      x11_prerequisite: ${{ parameters.x11_prerequisite }}
+      edk2_path: ${{ parameters.edk2_path }}
+      packages_path: $(workspace)/${{ join(':$(workspace)/', parameters.packages_path_list) }}
+      build_target_list: ${{ join(' ', parameters.build_target_list) }}
+      packages_build_list: ${{ join(':', parameters.packages_build_list) }}:${{ join(':', parameters.linux_packages_build_list) }}
+      tool_chain_tag_build_list: ${{ join(' ', parameters.tool_chain_tag_build_list) }}
+      arch_build_list: ${{ join(' ', parameters.arch_build_list) }}
+      nasm_prefix:
+      iasl_prefix:
+      gcc5_aarch64_prefix:
+      gcc5_arm_prefix:
+      tool_chain_tag: 'XCODE5'
+      tool_chain_archs: 'IA32 X64'
+      edk_tools_path: $(workspace)/$(edk2_path)/BaseTools
+    steps:
+      - script: |
+          ${{ parameters.git_commands }}
+        displayName: 'Clone EDK II Repositories'
+      - template: MacOsPrerequisites.yml
+      - template: LinuxEdk2Build.yml

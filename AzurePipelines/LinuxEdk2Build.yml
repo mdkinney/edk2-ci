@@ -1,0 +1,41 @@
+## @file
+#  Setup EDK II environment on Linux systems.  This build the EDK II BaseTools.
+#
+#  Copyright (c) 2019, Intel Corporation. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+steps:
+  - script: |
+      cd $(edk2_path)
+      make -C BaseTools
+      . edksetup.sh
+      cd $(workspace)
+      export
+      python --version
+      python3.7 --version
+      gcc --version
+      mtoc
+      $(gcc5_aarch64_prefix)-gcc --version
+      $(gcc5_arm_prefix)-gcc --version
+      $(nasm_prefix)nasm --v
+      $(iasl_prefix)iasl -v
+      openssl version
+      python $(workspace)/AzurePipelines/GenerateBuildScript.py
+      python $(workspace)/AzurePipelines/GenerateBuildScript.py > BuildCommands.sh
+      . BuildCommands.sh
+    displayName: 'Linux EDK II Build'
+    continueOnError: 'true'
+  - task: CopyFiles@2
+    displayName: Copy FD/LOG/REPORT files
+    inputs:
+      sourceFolder: '$(Build.SourcesDirectory)/Build'
+      contents: '**/*(*.fd|*.log|*.report)'
+      targetFolder: $(Build.ArtifactStagingDirectory)
+  - task: PublishBuildArtifacts@1
+    displayName: Publish FD/LOG/REPORT Artifacts
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: drop

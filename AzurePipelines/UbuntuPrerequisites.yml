@@ -1,0 +1,36 @@
+## @file
+#  Install prerequesists to support EDK II builds on an Azure Pipelines 
+#  Ubuntu agent.
+#
+#  Copyright (c) 2019, Intel Corporation. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+steps:
+  - script: |
+      wget http://releases.linaro.org/components/toolchain/binaries/7.4-2019.02/aarch64-linux-gnu/gcc-linaro-7.4.1-2019.02-x86_64_aarch64-linux-gnu.tar.xz
+      tar xvfJ gcc-linaro-7.4.1-2019.02-x86_64_aarch64-linux-gnu.tar.xz
+      wget http://releases.linaro.org/components/toolchain/binaries/7.4-2019.02/arm-linux-gnueabi/gcc-linaro-7.4.1-2019.02-x86_64_arm-linux-gnueabi.tar.xz
+      tar xvfJ gcc-linaro-7.4.1-2019.02-x86_64_arm-linux-gnueabi.tar.xz
+      sudo apt update                                                                               # APT
+      sudo dpkg --add-architecture i386
+      sudo apt install software-properties-common                                                   # APT
+      sudo add-apt-repository ppa:deadsnakes/ppa                                                    # APT
+      sudo apt update                                                                               # APT
+      sudo apt install uuid-dev flex bison gcab alien python3.7                                     # Python 3.7 + GCC5
+      wget https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/linux/nasm-2.14.02-0.fc27.x86_64.rpm  # NASM
+      sudo alien -i nasm-2.14.02-0.fc27.x86_64.rpm                                                  # NASM
+      wget https://acpica.org/sites/acpica/files/acpica-unix2-20190703.tar_0.gz                     # IASL
+      tar xzf acpica-unix2-20190703.tar_0.gz                                                        # IASL
+      cd acpica-unix2-20190703                                                                      # IASL
+      make iasl                                                                                     # IASL
+      sudo make install                                                                             # IASL
+      echo "##vso[task.setvariable variable=GCC5_AARCH64_PREFIX;]$(workspace)/gcc-linaro-7.4.1-2019.02-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-"
+      echo "##vso[task.setvariable variable=GCC5_ARM_PREFIX;]$(workspace)/gcc-linaro-7.4.1-2019.02-x86_64_arm-linux-gnueabi/bin/arm-linux-gnueabi-"
+    displayName: 'Ubuntu EDK II Prerequisites'
+  - script: |
+      sudo apt install libc6-dev-i386 libx11-dev:i386 libxext-dev:i386                              # IA32 libc, libX11, libXext
+    condition: and (always(), eq(variables['x11_prerequisite'], 'true'))
+    displayName: 'Ubuntu EDK II Prerequisites X11'

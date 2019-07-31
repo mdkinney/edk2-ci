@@ -1,0 +1,27 @@
+## @file
+#  Install prerequesists to support EDK II builds on an Azure Pipelines
+#  MacOS agent.
+#
+#  Copyright (c) 2019, Intel Corporation. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+steps:
+  - script: |
+      sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
+      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
+      brew install gcab
+      brew install nasm
+      brew install acpica
+      curl https://sourceforge.net/p/cloverefiboot/code/4372/tree/BuildTools/usr/local/bin/mtoc.NEW.zip?format=raw -o mtoc.zip
+      unzip -qu mtoc.zip -d ./tmp
+      sudo cp ./tmp/mtoc.NEW /usr/local/bin/mtoc
+      sudo cp ./tmp/mtoc.NEW /usr/local/bin/mtoc.NEW
+    displayName: 'Mac OS EDK II Prerequisites'
+  - script: |
+      brew install caskroom/cask/brew-cask 2> /dev/null
+      brew cask install xquartz
+    condition: and (always(), eq(variables['x11_prerequisite'], 'true'))
+    displayName: 'Mac OS EDK II Prerequisites X11'

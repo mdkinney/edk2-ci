@@ -1,9 +1,0 @@
-steps:
-  - script: |
-      git clone --depth 1 https://github.com/tianocore/edk2.git
-      cd edk2
-      git submodule update --init 
-      cd ..
-      git clone --depth=1 https://github.com/tianocore/edk2-platforms.git
-      git clone --depth=1 https://github.com/tianocore/edk2-non-osi.git
-    displayName: Clone EDK II Repositories
