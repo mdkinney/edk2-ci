@@ -15,7 +15,7 @@ trigger:
 jobs:
   - template: AzurePipelines/DoEdk2Build.yml
     parameters:
-      git_commands:
+      git_commands: |
         git clone --depth=1 https://github.com/mdkinney/edk2-platforms.git -b Bug_xxx_Vlv2_Remove_FCE_BAT_sh_V3
         git clone --depth=1 https://github.com/tianocore/edk2-non-osi.git
         git clone --depth 1 https://github.com/tianocore/edk2.git
