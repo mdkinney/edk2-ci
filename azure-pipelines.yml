@@ -15,5 +15,15 @@ trigger:
 jobs:
   - template: AzurePipelines/DoEdk2Build.yml
     parameters:
+      git_commands: |
+        git clone --depth 1 https://github.com/tianocore/edk2-staging.git -b Bug_1525_FmpDevicePkg_MultipleControllers_V2
+        cd edk2-staging
+        git submodule update --init
+      edk2_path: 'edk2-staging'
+      build_target_list:
+      - 'DEBUG'
+      - 'RELEASE'
+      packages_path_list:
+      - 'edk2-staging'
       packages_build_list:
-      - 'FatPkg/FatPkg.dsc'
+      - 'FmpDevicePkg/FmpDevicePkg.dsc'
