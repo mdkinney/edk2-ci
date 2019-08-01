@@ -10,7 +10,7 @@ The majority of the content in the EDK II open source project uses a
 
 The master branch of the edk2-ci repository contains the template for the files
 required in a patchset branch that initiates a Continuous Integration (CI)
-process.  git repositories and git branches may be used from TianoCore or public
+process.  Git repositories and Git branches may be used from TianoCore or public
 forks of TianoCore.  The branch naming convention is:
 
     patchset/<github id>/BZ_<bz id>/V<patch set version>/<title>
@@ -30,11 +30,11 @@ The required files in a `patchset` branch are:
 There is no FW code in a patchset branch.  Instead, a patchset branch provides
 an inventory of git repositories/branches to use for a CI build and the set of
 build commands to run against those git repositories/branches.  When a branch
-that follows the branch naming convention is pushed to edk2-ci, it starts a
+that follows the branch naming convention is pushed to `edk2-ci`, it starts a
 CI build using the inventory of git repositories/branches and build commands.
 A developer typically prepares a patchset in branch(s) in their personal fork of
-the EDK II repositories.  The GitCommands.txt file in the patchset branch is
-updated to point to these branch(s) in their personal fork of the EDK II
+the EDK II repositories.  The `azure_pipelines.yml` file in the patchset branch
+is updated to point to these branch(s) in their personal fork of the EDK II
 repositories.
 
 Each CI environment must be initialized to be compatible with an EDK II build.
@@ -52,17 +52,17 @@ for details on how to do this successfully.
 
 ## Azure Pipelines Configuration
 
-When using Azure Pipelines, only the azure_pipelines.yml file should be
+When using Azure Pipelines, only the `azure_pipelines.yml` file should be
 customized.  There are template files in the AzurePipelines directory that
 contain the set of Host OS/Compiler/CPU Arch combinations that are supported,
 the prerequisites that need to be installed for each Host OS, and the steps
 required to download the EDK II sources and run a sequence of EDK II build
 commands that produce log/report files and potentially FD/FV images.
 
-The azure_pipelines.yml file provides simple ways to specify the EDK II sources
-required to perform a build along with a sequence of packages/platforms to
-build.  I also includes the ability to filter out some Host OS/Compiler/CPU Arch
-combinations if a developer is working on a bug/feature for specific build
+The `azure_pipelines.yml` file provides a simple way to specify the EDK II
+sources required to perform a build along with a sequence of packages/platforms
+to build.  I also includes the ability to filter out some Host OS/Compiler/CPU
+Arch combinations if a developer is working on a bug/feature for specific build
 combination.
 
 The following is the complete set of parameters to the Azure Pipelines template
@@ -98,6 +98,8 @@ parameters:
 * `git_commands` - Any sequence of `git` commands required to install the EDK II
   sources required for the package/platform builds.  Multiple repositories may
   be cloned into a single WORKSPACE and specific branches can be checked out.
+  The default value clones the edk2 repository from Tianocore and updates all
+  submodules.
 * `x11_prerequisite` - Default is `'false'`.  If the `EmulatorPkg` is built for
   Linux or MacOS, then this parameter must be set to `'true'` to install the
   the extra required prerequisites.
@@ -105,12 +107,12 @@ parameters:
   used to build `BaseTools` and execute `edksetup.bat` or `edk2setup.sh`.  The
   default value is `'edk2'` which means no setting is required if the main edk2
   sources are cloned into their default location in WORKSPACE.  An example where
-  a different value is required is if multiple edk2 branches are cloned into the
-  same WORKSPACE and BaseTools and edksetup need to be used from a directory
-  other than edk2.
+  a different value is required is if multiple `edk2` branches are cloned into
+  the same WORKSPACE and `BaseTools` and `edksetup` need to be used from a
+  directory other than `edk2`.
 * `build_target_list` - List of EDK II build targets to use to build the
   specified packages/platforms.  The default is the `'DEBUG'` target.  The
-  `tools_def.txt` file specified the available set of build targets.
+  `tools_def.txt` file specifies the available set of build targets.
 * `packages_path_list` - List of WORKSPACE relative paths used to generate the
   PACKAGES_PATH environment variable.  The default is the `'edk2'` directory.
   If multiple repositories are cloned into WORKSPACE, then this list is expanded
@@ -129,9 +131,9 @@ parameters:
 * `packages_build_list` - List of package DSC files to build.  Additional `-D`
   flags can be optionally provided.  If one or more `-a` CPU architecture flags
   are specified, then the build is assumed to be a platform build and only the
-  specified CPU archs will be used.
+  specified CPU archs are used.
 * `linux_packages_build_list` - List of package DSC files to build, but only on
-  Linux/UNIX like Host OS environments.  The syntax is the same as
+  Linux/UNIX  Host OS environments.  The syntax is the same as
   `packages_build_list`.  So far, the only time this parameter is used is to
   build the EmulatorPkg for Linux/UNIX environments.
 * `windows_packages_build_list` - List of package DSC files to build, but only
