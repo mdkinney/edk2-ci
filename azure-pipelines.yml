@@ -15,5 +15,22 @@ trigger:
 jobs:
   - template: AzurePipelines/DoEdk2Build.yml
     parameters:
+      git_commands: |
+        git clone --depth=1 https://github.com/tianocore/edk2-platforms.git
+        git clone --depth=1 https://github.com/tianocore/edk2-non-osi.git
+        git clone --depth 1 https://github.com/tianocore/edk2.git
+        cd edk2
+        git submodule update --init
+      packages_path_list:
+      - 'edk2'
+      - 'edk2-platforms/Silicon/Intel'
+      - 'edk2-platforms/Platform/Intel'
+      - 'edk2-non-osi/Silicon/Intel'
+      build_target_list:
+      - 'DEBUG'
+      - 'RELEASE'
       packages_build_list:
-      - 'FatPkg/FatPkg.dsc'
+      - 'QuarkPlatformPkg/QuarkMin.dsc -a IA32'
+      - 'QuarkPlatformPkg/Quark.dsc -a IA32 -D SECURE_BOOT_ENABLE -D MEASURED_BOOT_ENABLE -D TPM_12_HARDWARE=ATMEL_I2C'
+      - 'Vlv2TbltDevicePkg/PlatformPkgX64.dsc  -a IA32 -a X64'
+      - 'Vlv2TbltDevicePkg/PlatformPkgIA32.dsc -a IA32'
