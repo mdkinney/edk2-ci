@@ -15,5 +15,25 @@ trigger:
 jobs:
   - template: AzurePipelines/DoEdk2Build.yml
     parameters:
+      build_target_list:
+      - 'RELEASE'
       packages_build_list:
-      - 'FatPkg/FatPkg.dsc'
+      - 'ArmPkg\ArmPkg.dsc'
+      - 'ArmPlatformPkg\ArmPlatformPkg.dsc'
+      - 'CryptoPkg\CryptoPkg.dsc'
+      - 'DynamicTablesPkg\DynamicTablesPkg.dsc'
+      - 'EmbeddedPkg\EmbeddedPkg.dsc'
+      - 'FatPkg\FatPkg.dsc'
+      - 'FmpDevicePkg\FmpDevicePkg.dsc'
+      - 'IntelFsp2Pkg\IntelFsp2Pkg.dsc'
+      - 'IntelFsp2WrapperPkg\IntelFsp2WrapperPkg.dsc'
+      - 'MdeModulePkg\MdeModulePkg.dsc'
+      - 'MdePkg\MdePkg.dsc'
+      - 'NetworkPkg\NetworkPkg.dsc'
+      - 'PcAtChipsetPkg\PcAtChipsetPkg.dsc'
+      - 'SecurityPkg\SecurityPkg.dsc'
+      - 'ShellPkg\ShellPkg.dsc'
+      - 'SignedCapsulePkg\SignedCapsulePkg.dsc'
+      - 'SourceLevelDebugPkg\SourceLevelDebugPkg.dsc'
+      - 'StandaloneMmPkg\StandaloneMmPkg.dsc'
+      - 'UefiCpuPkg\UefiCpuPkg.dsc'
