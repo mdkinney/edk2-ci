@@ -15,5 +15,10 @@ trigger:
 jobs:
   - template: AzurePipelines/DoEdk2Build.yml
     parameters:
+      build_target_list:
+      - 'DEBUG'
+      - 'RELEASE'
       packages_build_list:
-      - 'FatPkg/FatPkg.dsc'
+      - 'OvmfPkg/OvmfPkgIa32X64.dsc -a IA32 -a X64 -D SMM_REQUIRE -D DEBUG_ON_SERIAL_PORT'
+      - 'OvmfPkg/OvmfPkgIa32.dsc    -a IA32        -D SMM_REQUIRE -D DEBUG_ON_SERIAL_PORT'
+      - 'OvmfPkg/OvmfPkgX64.dsc             -a X64 -D SMM_REQUIRE -D DEBUG_ON_SERIAL_PORT'
