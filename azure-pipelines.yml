@@ -16,7 +16,7 @@ jobs:
   - template: AzurePipelines/DoEdk2Build.yml
     parameters:
       build_target_list:
-      - 'RELEASE'
+      - 'DEBUG'
       packages_build_list:
       - 'ArmPkg\ArmPkg.dsc'
       - 'ArmPlatformPkg\ArmPlatformPkg.dsc'
