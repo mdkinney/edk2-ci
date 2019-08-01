@@ -16,16 +16,9 @@ jobs:
   - template: AzurePipelines/DoEdk2Build.yml
     parameters:
       git_commands: |
-        git clone --depth 1 https://github.com/mdkinney/edk2.git -b BZ_none_EmulatorPkg_Fixes
-        cd edk2
-        git submodule update --init
-      x11_prerequisite: 'true'
+        git clone --depth 1 https://github.com/mdkinney/edk2.git -b Bug_1970_Shell_AcpiView_IA32_V2
       build_target_list:
       - 'DEBUG'
       - 'RELEASE'
-      linux_packages_build_list:
-      - 'EmulatorPkg/EmulatorPkg.dsc -a IA32 -D UNIX_SEC_BUILD'
-      - 'EmulatorPkg/EmulatorPkg.dsc -a X64  -D UNIX_SEC_BUILD'
-      windows_packages_build_list:
-      - 'EmulatorPkg/EmulatorPkg.dsc -a IA32 -D WIN_SEC_BUILD'
-      - 'EmulatorPkg/EmulatorPkg.dsc -a X64  -D WIN_SEC_BUILD'
+      packages_build_list:
+      - 'ShellPkg/ShellPkg.dsc'
