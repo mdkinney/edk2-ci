@@ -7,11 +7,6 @@
 #
 ##
 
-trigger:
-  branches:
-    include:
-      - patchset/*
-
 jobs:
   - template: AzurePipelines/DoEdk2Build.yml
     parameters:
