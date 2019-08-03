@@ -16,7 +16,7 @@ jobs:
   - template: AzurePipelines/DoEdk2Build.yml
     parameters:
       git_commands: |
-        git clone --depth 1 https://github.com/mdkinney/edk2.git -b Bug_1970_Shell_AcpiView_IA32_V2
+        git clone --depth 1 https://github.com/mdkinney/edk2.git -b Bug_1970_Shell_AcpiView_IA32_V3
       build_target_list:
       - 'DEBUG'
       - 'RELEASE'
