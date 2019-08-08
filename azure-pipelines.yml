@@ -24,5 +24,6 @@ jobs:
       build_target_list:
       - 'DEBUG'
       - 'RELEASE'
+      - 'NOOPT'
       packages_build_list:
-      - 'Platform/Intel/Stratix10/Stratix10SoCPkg.dsc -a AARCH64'
+      - 'Platform/Intel/Stratix10/Stratix10SoCPkg.dsc -a AARCH64 -v'
