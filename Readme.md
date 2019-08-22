@@ -92,8 +92,6 @@ parameters:
   - 'ARM'
   - 'AARCH64'
   packages_build_list:
-  linux_packages_build_list:
-  windows_packages_build_list:
 ```
 * `git_commands` - Any sequence of `git` commands required to install the EDK II
   sources required for the package/platform builds.  Multiple repositories may
@@ -132,14 +130,6 @@ parameters:
   flags can be optionally provided.  If one or more `-a` CPU architecture flags
   are specified, then the build is assumed to be a platform build and only the
   specified CPU archs are used.
-* `linux_packages_build_list` - List of package DSC files to build, but only on
-  Linux/UNIX  Host OS environments.  The syntax is the same as
-  `packages_build_list`.  So far, the only time this parameter is used is to
-  build the EmulatorPkg for Linux/UNIX environments.
-* `windows_packages_build_list` - List of package DSC files to build, but only
-  on Windows like Host OS environments.  The syntax is the same as
-  `packages_build_list`.  So far, the only time this parameter is used is to
-  build the EmulatorPkg for Windows environments.
 
 ## Build single package in TianoCore edk2 repository
 
@@ -185,10 +175,7 @@ jobs:
 ## Build EmulatorPkg from TianoCore edk2 repository
 
 The following example builds the EmulatorPkg.  The `x11_prerequisite` must be
-set to `'true'` for the EmulatorPkg.  Also, since different `-D` flags are
-required for Linux and Windows, the `linux_packages_build_list` and
-`windows_packages_build_list` parameters must be used instead of
-`packages_build_list`.
+set to `'true'` for the EmulatorPkg.
 
 ```
 trigger:
@@ -200,12 +187,9 @@ jobs:
   - template: AzurePipelines/DoEdk2Build.yml
     parameters:
       x11_prerequisite: 'true'
-      linux_packages_build_list:
-      - 'EmulatorPkg/EmulatorPkg.dsc -a IA32 -D UNIX_SEC_BUILD'
-      - 'EmulatorPkg/EmulatorPkg.dsc -a X64  -D UNIX_SEC_BUILD'
-      windows_packages_build_list:
-      - 'EmulatorPkg/EmulatorPkg.dsc -a IA32 -D WIN_SEC_BUILD'
-      - 'EmulatorPkg/EmulatorPkg.dsc -a X64  -D WIN_SEC_BUILD'
+      packages_build_list:
+      - 'EmulatorPkg/EmulatorPkg.dsc -a IA32'
+      - 'EmulatorPkg/EmulatorPkg.dsc -a X64'
 ```
 
 ## Build Platform from edk2-platforms using Multiple Repositories
