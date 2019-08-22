@@ -30,13 +30,6 @@ jobs:
       - 'DEBUG'
       - 'RELEASE'
       packages_build_list:
-      - 'QuarkPlatformPkg/QuarkMin.dsc -a IA32'
-      - 'QuarkPlatformPkg/QuarkMin.dsc -a IA32 -D SOURCE_DEBUG_ENABLE'
-      - 'QuarkPlatformPkg/Quark.dsc -a IA32'
-      - 'QuarkPlatformPkg/Quark.dsc -a IA32 -D SOURCE_DEBUG_ENABLE'
-      - 'QuarkPlatformPkg/Quark.dsc -a IA32 -D PERFORMANCE_ENABLE'
-      - 'QuarkPlatformPkg/Quark.dsc -a IA32 -D CAPSULE_ENABLE -D RECOVERY_ENABLE'
-      - 'QuarkPlatformPkg/Quark.dsc -a IA32 -D SECURE_BOOT_ENABLE -D MEASURED_BOOT_ENABLE -D TPM_12_HARDWARE=ATMEL_I2C'
       - 'Vlv2TbltDevicePkg/PlatformPkgX64.dsc  -a IA32 -a X64'
       - 'Vlv2TbltDevicePkg/PlatformPkgX64.dsc  -a IA32 -a X64 -D SOURCE_DEBUG_ENABLE'
       - 'Vlv2TbltDevicePkg/PlatformPkgX64.dsc  -a IA32 -a X64 -D RECOVERY_ENABLE'
