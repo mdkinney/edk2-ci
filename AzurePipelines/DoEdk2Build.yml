@@ -30,8 +30,6 @@ parameters:
   - 'ARM'
   - 'AARCH64'
   packages_build_list:
-  linux_packages_build_list:
-  windows_packages_build_list:
 
 jobs:
   - job: windows_vs2015
@@ -45,7 +43,7 @@ jobs:
       edk2_path: ${{ parameters.edk2_path }}
       packages_path: $(workspace)\${{ join(';$(workspace)\', parameters.packages_path_list) }}
       build_target_list: ${{ join(' ', parameters.build_target_list) }}
-      packages_build_list: ${{ join(':', parameters.packages_build_list) }}:${{ join(':', parameters.windows_packages_build_list) }}
+      packages_build_list: ${{ join(':', parameters.packages_build_list) }}
       tool_chain_tag_build_list: ${{ join(' ', parameters.tool_chain_tag_build_list) }}
       arch_build_list: ${{ join(' ', parameters.arch_build_list) }}
       nasm_prefix:
@@ -73,7 +71,7 @@ jobs:
       edk2_path: ${{ parameters.edk2_path }}
       packages_path: $(workspace)\${{ join(';$(workspace)\', parameters.packages_path_list) }}
       build_target_list: ${{ join(' ', parameters.build_target_list) }}
-      packages_build_list: ${{ join(':', parameters.packages_build_list) }}:${{ join(':', parameters.windows_packages_build_list) }}
+      packages_build_list: ${{ join(':', parameters.packages_build_list) }}
       tool_chain_tag_build_list: ${{ join(' ', parameters.tool_chain_tag_build_list) }}
       arch_build_list: ${{ join(' ', parameters.arch_build_list) }}
       nasm_prefix:
@@ -101,7 +99,7 @@ jobs:
       edk2_path: ${{ parameters.edk2_path }}
       packages_path: $(workspace)/${{ join(':$(workspace)/', parameters.packages_path_list) }}
       build_target_list: ${{ join(' ', parameters.build_target_list) }}
-      packages_build_list: ${{ join(':', parameters.packages_build_list) }}:${{ join(':', parameters.linux_packages_build_list) }}
+      packages_build_list: ${{ join(':', parameters.packages_build_list) }}
       tool_chain_tag_build_list: ${{ join(' ', parameters.tool_chain_tag_build_list) }}
       arch_build_list: ${{ join(' ', parameters.arch_build_list) }}
       nasm_prefix:
@@ -128,7 +126,7 @@ jobs:
       edk2_path: ${{ parameters.edk2_path }}
       packages_path: $(workspace)/${{ join(':$(workspace)/', parameters.packages_path_list) }}
       build_target_list: ${{ join(' ', parameters.build_target_list) }}
-      packages_build_list: ${{ join(':', parameters.packages_build_list) }}:${{ join(':', parameters.linux_packages_build_list) }}
+      packages_build_list: ${{ join(':', parameters.packages_build_list) }}
       tool_chain_tag_build_list: ${{ join(' ', parameters.tool_chain_tag_build_list) }}
       arch_build_list: ${{ join(' ', parameters.arch_build_list) }}
       nasm_prefix:
