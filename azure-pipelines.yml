@@ -16,7 +16,7 @@ jobs:
   - template: AzurePipelines/DoEdk2Build.yml
     parameters:
       git_commands: |
-        git clone --depth 1 https://github.com/mdkinney/edk2.git -b Bug_162_2055_2056_EmulatorPkg_FixVs20xxBoot_SimplyBuildConfig_V4
+        git clone --depth 1 https://github.com/mdkinney/edk2.git -b Bug_2105_EmulatorPkg_WinHost_Unload_Multiple
       x11_prerequisite: 'true'
       build_target_list:
       - 'DEBUG'
