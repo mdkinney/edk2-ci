@@ -16,7 +16,7 @@ jobs:
   - template: AzurePipelines/DoEdk2Build.yml
     parameters:
       build_target_list:
-      - 'NOOPT'
+      - 'DEBUG'
       packages_build_list:
       - 'OvmfPkg/OvmfPkgIa32X64.dsc -a IA32 -a X64 -D SMM_REQUIRE -D DEBUG_ON_SERIAL_PORT -D SOURCE_DEBUG_ENABLE'
       - 'OvmfPkg/OvmfPkgIa32.dsc    -a IA32        -D SMM_REQUIRE -D DEBUG_ON_SERIAL_PORT -D SOURCE_DEBUG_ENABLE'
