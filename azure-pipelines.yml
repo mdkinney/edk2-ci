@@ -28,13 +28,12 @@ jobs:
       - 'edk2-non-osi/Silicon/Intel'
       build_target_list:
       - 'DEBUG'
-      - 'RELEASE'
       packages_build_list:
       - 'Vlv2TbltDevicePkg/PlatformPkgX64.dsc  -a IA32 -a X64'
       - 'Vlv2TbltDevicePkg/PlatformPkgX64.dsc  -a IA32 -a X64 -D SOURCE_DEBUG_ENABLE'
       - 'Vlv2TbltDevicePkg/PlatformPkgX64.dsc  -a IA32 -a X64 -D RECOVERY_ENABLE'
       - 'Vlv2TbltDevicePkg/PlatformPkgX64.dsc  -a IA32 -a X64 -D NETWORK_ISCSI_ENABLE -D NETWORK_VLAN_ENABLE -D NETWORK_TLS_ENABLE -D NETWORK_HTTP_BOOT_ENABLE'
       - 'Vlv2TbltDevicePkg/PlatformPkgIA32.dsc -a IA32'
-      - 'Vlv2TbltDevicePkg/PlatformPkgIA32.dsc -a IA32 -D SOURCE_DEBUG_ENABLE'
-      - 'Vlv2TbltDevicePkg/PlatformPkgIA32.dsc -a IA32 -D RECOVERY_ENABLE'
-      - 'Vlv2TbltDevicePkg/PlatformPkgIA32.dsc -a IA32 -D NETWORK_ISCSI_ENABLE -D NETWORK_VLAN_ENABLE -D NETWORK_TLS_ENABLE -D NETWORK_HTTP_BOOT_ENABLE'
+      - 'Vlv2TbltDevicePkg/PlatformPkgIA32.dsc -a IA32        -D SOURCE_DEBUG_ENABLE'
+      - 'Vlv2TbltDevicePkg/PlatformPkgIA32.dsc -a IA32        -D RECOVERY_ENABLE'
+      - 'Vlv2TbltDevicePkg/PlatformPkgIA32.dsc -a IA32        -D NETWORK_ISCSI_ENABLE -D NETWORK_VLAN_ENABLE -D NETWORK_TLS_ENABLE -D NETWORK_HTTP_BOOT_ENABLE'
