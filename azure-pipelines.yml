@@ -27,7 +27,7 @@ jobs:
       - 'edk2-platforms/Platform/Intel'
       - 'edk2-non-osi/Silicon/Intel'
       build_target_list:
-      - 'DEBUG'
+      - 'RELEASE'
       packages_build_list:
       - 'Vlv2TbltDevicePkg/PlatformPkgX64.dsc  -a IA32 -a X64'
       - 'Vlv2TbltDevicePkg/PlatformPkgX64.dsc  -a IA32 -a X64 -D SOURCE_DEBUG_ENABLE'
