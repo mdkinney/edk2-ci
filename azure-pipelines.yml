@@ -15,6 +15,10 @@ trigger:
 jobs:
   - template: AzurePipelines/DoEdk2Build.yml
     parameters:
+      git_commands: |
+        git clone --depth 1 https://github.com/mdkinney/edk2.git -b Bug_xxx_FixPackageDependencies
+        cd edk2
+        git submodule update --init
       build_target_list:
       - 'DEBUG'
       packages_build_list:
