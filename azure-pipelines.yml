@@ -17,6 +17,10 @@ jobs:
     parameters:
       build_target_list:
       - 'DEBUG'
+      - 'RELEASE'
+      - 'NOOPT'
+      tool_chain_tag_build_list:
+      - 'XCODE5'
       packages_build_list:
       - 'ArmPkg\ArmPkg.dsc'
       - 'ArmPlatformPkg\ArmPlatformPkg.dsc'

@@ -15,10 +15,7 @@ steps:
       brew install gcab
       brew install nasm
       brew install acpica
-      curl https://sourceforge.net/p/cloverefiboot/code/4372/tree/BuildTools/usr/local/bin/mtoc.NEW.zip?format=raw -o mtoc.zip
-      unzip -qu mtoc.zip -d ./tmp
-      sudo cp ./tmp/mtoc.NEW /usr/local/bin/mtoc
-      sudo cp ./tmp/mtoc.NEW /usr/local/bin/mtoc.NEW
+      brew install mtoc
     displayName: 'Mac OS EDK II Prerequisites'
   - script: |
       brew install caskroom/cask/brew-cask 2> /dev/null
